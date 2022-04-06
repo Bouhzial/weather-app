@@ -1,6 +1,8 @@
 import React from "react";
 import cities from "../../lib/city.list.json";
-
+import Head from "next/head";
+import TodayWeather from "../../components/TodayWeather";
+import moment from "moment-timezone";
 export async function getServerSideProps(context) {
   const slug = context.params.city;
   const city = getCity(slug);
@@ -11,7 +13,7 @@ export async function getServerSideProps(context) {
     };
   }
   const res = await fetch(
-    `https://api.openweathermap.org/data/2.5/onecall?lat=${city.coord.lat}&lon=${city.coord.lon}&appid=${process.env.API_KEY}&exclude=minutely&units=metric`
+    `https://api.openweathermap.org/data/2.5/onecall?lat=${city.coord.lat}&lon=${city.coord.lon}&appid=930b11fbec444a565010c99a96755432&exclude=minutely&units=metric`
   );
 
   const data = await res.json();
@@ -21,11 +23,14 @@ export async function getServerSideProps(context) {
       notFound: true,
     };
   }
-  console.log(data);
 
   return {
     props: {
-      slug: slug,
+      city: city,
+      currentWeather: data.current,
+      dailyWeather: data.daily,
+      Hourlyweathee: getHourly(data.hourly, data.timezone),
+      timezone: data.timezone,
     },
   };
 }
@@ -45,11 +50,36 @@ const getCity = (params) => {
   }
 };
 
-export default function city({ slug }) {
+const getHourly = (hourlyData, timezone) => {
+  const endOfDay = moment().tz(timezone).endOf("day").valueOf();
+  const endTimeStamp = Math.floor(endOfDay / 1000);
+
+  const todaysData = hourlyData.filter((data) => data.dt < endTimeStamp);
+
+  return todaysData;
+};
+
+export default function city({
+  Hourlyweathee,
+  city,
+  dailyWeather,
+  currentWeather,
+  timezone,
+}) {
   return (
     <div>
-      <h1>city</h1>
-      <h2>{slug}</h2>
+      <Head>
+        <title>{city.name} Weather</title>
+      </Head>
+      <div className="page-wrapper">
+        <div className="container">
+          <TodayWeather
+            city={city}
+            weather={dailyWeather[0]}
+            timezone={timezone}
+          />
+        </div>
+      </div>
     </div>
   );
 }
