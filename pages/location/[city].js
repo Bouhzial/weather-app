@@ -4,6 +4,7 @@ import Head from "next/head";
 import TodayWeather from "../../components/TodayWeather";
 import moment from "moment-timezone";
 import DailyWeather from "../../components/DailyWeather";
+import WeaklyWeather from "../../components/WeaklyWeather";
 export async function getServerSideProps(context) {
   const slug = context.params.city;
   const city = getCity(slug);
@@ -80,6 +81,7 @@ export default function city({
             timezone={timezone}
           />
           <DailyWeather Hourlyweather={Hourlyweathee} timezone={timezone} />
+          <WeaklyWeather WeaklyWeather={dailyWeather} timezone={timezone} />
         </div>
       </div>
     </div>
