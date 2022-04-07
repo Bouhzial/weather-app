@@ -5,6 +5,8 @@ import TodayWeather from "../../components/TodayWeather";
 import moment from "moment-timezone";
 import DailyWeather from "../../components/DailyWeather";
 import WeaklyWeather from "../../components/WeaklyWeather";
+import Searchbox from "../../components/Searchbox";
+import Link from "next/link";
 export async function getServerSideProps(context) {
   const slug = context.params.city;
   const city = getCity(slug);
@@ -29,7 +31,6 @@ export async function getServerSideProps(context) {
   return {
     props: {
       city: city,
-      currentWeather: data.current,
       dailyWeather: data.daily,
       Hourlyweathee: getHourly(data.hourly, data.timezone),
       timezone: data.timezone,
@@ -61,13 +62,7 @@ const getHourly = (hourlyData, timezone) => {
   return todaysData;
 };
 
-export default function city({
-  Hourlyweathee,
-  city,
-  dailyWeather,
-  currentWeather,
-  timezone,
-}) {
+export default function city({ Hourlyweathee, city, dailyWeather, timezone }) {
   return (
     <div>
       <Head>
@@ -75,6 +70,10 @@ export default function city({
       </Head>
       <div className="page-wrapper">
         <div className="container">
+          <Link href="/">
+            <a className="back-link">&larr; Home</a>
+          </Link>
+          <Searchbox placeHolder="search for another location" />
           <TodayWeather
             city={city}
             weather={dailyWeather[0]}

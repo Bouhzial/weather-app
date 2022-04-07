@@ -1,11 +1,20 @@
 import React from "react";
 import cities from "../lib/city.list.json";
 import Link from "next/link";
+import Router from "next/router";
 
-export default function Searchbox() {
+export default function Searchbox({ placeholder }) {
   const [query, setquery] = React.useState("");
   const [result, setresult] = React.useState([]);
 
+  React.useEffect(() => {
+    const clearQuery = () => setquery("");
+    Router.events.on("routeChangeComplete", clearQuery);
+
+    return () => {
+      Router.events.off("routeChangeComplete", clearQuery);
+    };
+  }, []);
   const onChange = (e) => {
     const { value } = e.target;
     setquery(value);
@@ -32,7 +41,12 @@ export default function Searchbox() {
   };
   return (
     <div className="search">
-      <input type="text" value={query} onChange={onChange} />
+      <input
+        type="text"
+        placeholder={placeholder ? placeholder : "search for a location"}
+        value={query}
+        onChange={onChange}
+      />
 
       {query.length > 3 && (
         <ul>
@@ -49,7 +63,7 @@ export default function Searchbox() {
               </li>
             ))
           ) : (
-            <h1>no resulte</h1>
+            <li>no resulte</li>
           )}
         </ul>
       )}
