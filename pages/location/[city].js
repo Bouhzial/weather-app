@@ -3,6 +3,7 @@ import cities from "../../lib/city.list.json";
 import Head from "next/head";
 import TodayWeather from "../../components/TodayWeather";
 import moment from "moment-timezone";
+import DailyWeather from "../../components/DailyWeather";
 export async function getServerSideProps(context) {
   const slug = context.params.city;
   const city = getCity(slug);
@@ -78,6 +79,7 @@ export default function city({
             weather={dailyWeather[0]}
             timezone={timezone}
           />
+          <DailyWeather Hourlyweather={Hourlyweathee} timezone={timezone} />
         </div>
       </div>
     </div>
